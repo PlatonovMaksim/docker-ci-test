@@ -1,4 +1,4 @@
-name: Docker Build CI
+name: Basic CI Pipeline
 
 on:
   push:
@@ -6,12 +6,24 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: self-hosted
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Show Docker version
+        run: docker --version
+
       - name: Build Docker image
         run: docker build -t test-image .
+
+      - name: Run container
+        run: docker run -d --name test-container test-image
+
+      - name: Stop container
+        run: docker stop test-container
+
+      - name: Remove container
+        run: docker rm test-container
